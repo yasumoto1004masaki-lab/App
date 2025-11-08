@@ -1,0 +1,18 @@
+graph LR
+    subgraph Client Devices
+    A[Device A - Agent]
+    B[Device B - Agent]
+    end
+
+    subgraph Cloud
+    S[Server (Go)]
+    G[Google OAuth2]
+    end
+
+    A -- OAuth Login --> G
+    B -- OAuth Login --> G
+    A --> S
+    B --> S
+    S --> A
+    S --> B
+    A <--> B
