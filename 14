@@ -1,0 +1,26 @@
+package main
+
+import (
+	"bytes"
+	"flag"
+	"fmt"
+	"net/http"
+	"time"
+)
+
+func main() {
+	server := flag.String("server", "https://localhost:8443", "Server URL")
+	flag.Parse()
+
+	email, _ := loginWithGoogle()
+	fmt.Println("Logged in as:", email)
+
+	body := []byte(fmt.Sprintf(`{"agent":"example","email":"%s"}`, email))
+	http.Post(*server+"/api/register", "application/json", bytes.NewBuffer(body))
+
+	ticker := time.NewTicker(30 * time.Second)
+	for range ticker.C {
+		http.Get(*server + "/api/heartbeat")
+		fmt.Println("heartbeat ok")
+	}
+}
