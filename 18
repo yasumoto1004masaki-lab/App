@@ -1,0 +1,4 @@
+git init
+git add .
+git commit -m "Initial commit: Google-linked safe remote admin template"
+gh repo create your-username/remote-admin-safe-template --public --source=. --push
