@@ -1,0 +1,45 @@
+package main
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/gorilla/websocket"
+)
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool { return true }, // 開発用
+}
+
+var clients = map[*websocket.Conn]string{} // 接続 -> email
+
+func signalingHandler(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println("upgrade:", err)
+		return
+	}
+	defer c.Close()
+
+	email := r.URL.Query().Get("email")
+	clients[c] = email
+	log.Println("Client connected:", email)
+
+	for {
+		var msg map[string]interface{}
+		err := c.ReadJSON(&msg)
+		if err != nil {
+			log.Println("read:", err)
+			delete(clients, c)
+			break
+		}
+
+		// ブロードキャスト（同じメールアカウント同士にのみ）
+		for client, e := range clients {
+			if client == c || e != email {
+				continue
+			}
+			client.WriteJSON(msg)
+		}
+	}
+}
