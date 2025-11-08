@@ -1,0 +1,26 @@
+# Remote Admin Safe Template — Google アカウント連携構成図
+
+## 🔐 認証・接続フロー
+
+```mermaid
+sequenceDiagram
+    participant U as Device A（ユーザー）
+    participant G as Google OAuth
+    participant S as 管理サーバ
+    participant D as Device B（同一ユーザー）
+
+    U->>S: /oauth/login
+    S->>G: 認可リクエスト (client_id, redirect_uri)
+    G-->>U: Googleログイン画面
+    U->>G: ログイン＋同意
+    G-->>S: 認可コード
+    S->>G: トークン交換
+    G-->>S: id_token + email
+    S->>U: 認証完了 (email=user@example.com)
+    U->>S: エージェント登録
+
+    D->>S: 同じGoogleアカウントでログイン
+    S->>S: 同一メール判定
+    S-->>U: シグナリング許可
+    S-->>D: シグナリング許可
+    U<->>D: WebRTC P2P接続（暗号化）
