@@ -1,0 +1,13 @@
+package main
+
+import (
+	"fmt"
+	"os/exec"
+)
+
+func loginWithGoogle() (string, error) {
+	fmt.Println("Opening browser for Google login...")
+	cmd := exec.Command("open", "https://yourserver.com/oauth/login")
+	cmd.Start()
+	return "user@example.com", nil // 実際はAPIレスポンスから取得
+}
