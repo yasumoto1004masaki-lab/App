@@ -1,0 +1,4 @@
+import "./auth"
+
+http.HandleFunc("/oauth/login", auth.HandleGoogleLogin)
+http.HandleFunc("/oauth/callback", auth.HandleGoogleCallback)
