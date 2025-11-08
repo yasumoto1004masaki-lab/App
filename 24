@@ -1,0 +1,41 @@
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/pion/webrtc/v3"
+)
+
+func startWebRTC() {
+	// PeerConnection作成
+	pc, err := webrtc.NewPeerConnection(webrtc.Configuration{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// データチャネル作成
+	dc, err := pc.CreateDataChannel("data", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dc.OnOpen(func() {
+		fmt.Println("Data channel open!")
+		dc.SendText("Hello from agent!")
+	})
+
+	dc.OnMessage(func(msg webrtc.DataChannelMessage) {
+		fmt.Println("Received message:", string(msg.Data))
+	})
+
+	// SDP offer作成
+	offer, err := pc.CreateOffer(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	pc.SetLocalDescription(offer)
+
+	// TODO: signalingサーバー経由でoffer送信 → answer受信
+	fmt.Println("SDP Offer ready, send via signaling server")
+}
