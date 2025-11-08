@@ -1,0 +1,11 @@
+# 管理コンソール（React + Vite）
+
+- GoogleログインUI
+- デバイス一覧
+- 接続許可画面
+- 操作ログビュー
+
+起動:
+```bash
+npm create vite@latest console --template react
+cd console && npm install && npm run dev
