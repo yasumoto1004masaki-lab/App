@@ -1,0 +1,57 @@
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/pion/webrtc/v3"
+	"github.com/go-vgo/robotgo" // マウス/キーボード操作用
+)
+
+func startRemoteControl() {
+	// PeerConnection作成
+	pc, err := webrtc.NewPeerConnection(webrtc.Configuration{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// データチャネル作成
+	dc, err := pc.CreateDataChannel("control", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dc.OnOpen(func() {
+		fmt.Println("Control channel open!")
+	})
+
+	// メッセージ受信で操作
+	dc.OnMessage(func(msg webrtc.DataChannelMessage) {
+		command := string(msg.Data)
+		fmt.Println("Received command:", command)
+
+		switch command {
+		case "click":
+			robotgo.Click()
+		case "double_click":
+			robotgo.DoubleClick()
+		case "up":
+			robotgo.KeyTap("up")
+		case "down":
+			robotgo.KeyTap("down")
+		case "left":
+			robotgo.KeyTap("left")
+		case "right":
+			robotgo.KeyTap("right")
+		}
+	})
+
+	offer, err := pc.CreateOffer(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	pc.SetLocalDescription(offer)
+
+	// TODO: signalingサーバー経由でOffer送信 → Answer受信
+	fmt.Println("SDP Offer ready, send via signaling server")
+}
