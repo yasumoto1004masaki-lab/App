@@ -1,0 +1,12 @@
+package main
+
+type Session struct {
+	Email   string
+	AgentID string
+}
+
+var sessions = map[string]*Session{}
+
+func CanConnect(a, b string) bool {
+	return a == b // 同じGoogleアカウント同士のみ接続許可
+}
