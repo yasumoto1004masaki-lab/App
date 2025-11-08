@@ -1,0 +1,35 @@
+import React, { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+
+type RemoteControlProps = {
+  peerConnection: RTCPeerConnection;
+};
+
+export default function RemoteControl({ peerConnection }: RemoteControlProps) {
+  const dcRef = useRef<RTCDataChannel | null>(null);
+
+  useEffect(() => {
+    const dc = peerConnection.createDataChannel("control");
+    dcRef.current = dc;
+    dc.onopen = () => console.log("Control channel open");
+    dc.onmessage = (ev) => console.log("Received from agent:", ev.data);
+  }, [peerConnection]);
+
+  const sendCommand = (cmd: string) => {
+    if (dcRef.current && dcRef.current.readyState === "open") {
+      dcRef.current.send(cmd);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Remote Control</h2>
+      <button onClick={() => sendCommand("click")}>Click</button>
+      <button onClick={() => sendCommand("double_click")}>Double Click</button>
+      <button onClick={() => sendCommand("up")}>Up</button>
+      <button onClick={() => sendCommand("down")}>Down</button>
+      <button onClick={() => sendCommand("left")}>Left</button>
+      <button onClick={() => sendCommand("right")}>Right</button>
+    </div>
+  );
+}
