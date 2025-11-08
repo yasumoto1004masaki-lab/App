@@ -1,0 +1,9 @@
+FROM golang:1.21-alpine AS build
+WORKDIR /src
+COPY server/ ./server
+RUN cd server && go build -o /bin/server
+
+FROM alpine
+COPY --from=build /bin/server /usr/local/bin/server
+EXPOSE 8443
+ENTRYPOINT ["/usr/local/bin/server"]
