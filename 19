@@ -1,0 +1,38 @@
+remote-admin-safe-template/
+├─ README.md                ← 多言語版の切り替え説明入り
+├─ locales/
+│   ├─ en/
+│   │   ├─ messages.json
+│   │   ├─ privacy.json
+│   │   └─ ui.json
+│   ├─ ja/
+│   │   ├─ messages.json
+│   │   ├─ privacy.json
+│   │   └─ ui.json
+│   └─ zh/
+│       ├─ messages.json
+│       ├─ privacy.json
+│       └─ ui.json
+├─ server/
+│   ├─ main.go
+│   ├─ i18n/
+│   │   └─ translator.go
+│   └─ auth/
+│       └─ google.go
+├─ agent/
+│   ├─ agent.go
+│   ├─ auth.go
+│   └─ locale_loader.go
+├─ console/
+│   ├─ src/
+│   │   ├─ i18n/
+│   │   │   ├─ index.ts
+│   │   │   └─ locales/
+│   │   │       ├─ en.json
+│   │   │       ├─ ja.json
+│   │   │       └─ zh.json
+│   │   └─ App.tsx
+└─ docs/
+    ├─ architecture.md
+    ├─ privacy_consent.md
+    └─ i18n.md
