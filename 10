@@ -1,0 +1,44 @@
+package main
+
+import (
+	"crypto/tls"
+	"fmt"
+	"log"
+	"net/http"
+)
+
+func main() {
+	http.HandleFunc("/api/health", healthHandler)
+	http.HandleFunc("/api/register", registerHandler)
+	http.HandleFunc("/api/heartbeat", heartbeatHandler)
+
+	addr := ":8443"
+	fmt.Println("Server running on", addr)
+
+	server := &http.Server{
+		Addr: addr,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		},
+	}
+	log.Fatal(server.ListenAndServeTLS("certs/server.crt", "certs/server.key"))
+}
+
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
+}
+
+func registerHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(`{"status":"registered"}`))
+}
+
+func heartbeatHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(`{"status":"alive"}`))
+}
